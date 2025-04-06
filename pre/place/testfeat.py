@@ -2,7 +2,7 @@ import sys
 sys.path.append("../")
 from utilis import mkdir_ifmiss,read_txt_list,read_json
 from utilis.package import *
-import mmcv
+import mmengine
 import cv2
 import librosa
 import pickle
@@ -11,7 +11,7 @@ import multiprocessing
 import subprocess
 
 if __name__=='__main__':
-    data_root = "../../data/scene318"
+    data_root = "/data/SceneSeg/data"
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_workers', type=int,default=8,help='number of processors.')
     parser.add_argument('--source_video_path',type=str,default=osp.join(data_root,"shot_video"))

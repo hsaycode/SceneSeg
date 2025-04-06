@@ -206,7 +206,7 @@ def get_anno_dict(anno_fn):
 
 
 def main():
-    from mmcv import Config
+    from mmengine import Config
     cfg = Config.fromfile("./config/test/all.py")
     imdbidlist_json, annos_dict, annos_valid_dict, casts_dict, acts_dict = data_pre(cfg)
     partition = data_partition(cfg, imdbidlist_json, annos_valid_dict)

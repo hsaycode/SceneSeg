@@ -17,6 +17,7 @@ def get_data(cfg):
         valSet = Preprocessor(cfg, partition['val'], data_dict)
         return trainSet, testSet, valSet
 
+    
     elif cfg.dataset.name == "image":
         from .data.image import Preprocessor, data_pre, data_partition
         imdbidlist_json, annos_dict, annos_valid_dict = data_pre(cfg)
@@ -34,6 +35,26 @@ def get_data(cfg):
         trainSet = Preprocessor(cfg, partition['train'])
         testSet = Preprocessor(cfg, partition['test'])
         valSet = Preprocessor(cfg, partition['val'])
+        return trainSet, testSet, valSet
+    
+    elif cfg.dataset.name == "place":
+        from .data.place import Preprocessor, data_pre, data_partition
+        imdbidlist_json, annos_dict, annos_valid_dict = data_pre(cfg)
+        partition = data_partition(cfg, imdbidlist_json, annos_valid_dict)
+        data_dict = {"annos_dict": annos_dict}
+        trainSet = Preprocessor(cfg, partition['train'], data_dict)
+        testSet = Preprocessor(cfg, partition['test'], data_dict)
+        valSet = Preprocessor(cfg, partition['val'], data_dict)
+        return trainSet, testSet, valSet
+
+    elif cfg.dataset.name == "aud":
+        from .data.audio import Preprocessor, data_pre, data_partition
+        imdbidlist_json, annos_dict, annos_valid_dict = data_pre(cfg)
+        partition = data_partition(cfg, imdbidlist_json, annos_valid_dict)
+        data_dict = {"annos_dict": annos_dict}
+        trainSet = Preprocessor(cfg, partition['train'], data_dict)
+        testSet = Preprocessor(cfg, partition['test'], data_dict)
+        valSet = Preprocessor(cfg, partition['val'], data_dict)
         return trainSet, testSet, valSet
 
     elif cfg.dataset.name == "custom":

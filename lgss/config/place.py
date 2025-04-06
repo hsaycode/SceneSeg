@@ -1,7 +1,7 @@
 experiment_name = "place"
 experiment_description = "scene segmentation with place modality"
 # overall confg
-data_root = '../data/scene318'
+data_root = '/data/SceneSeg/data'
 shot_frm_path = data_root + "/shot_movie318"
 shot_num = 4  # even
 seq_len = 10  # even
@@ -9,7 +9,7 @@ gpus = "0,1,2,3,4,5,6,7"
 
 # dataset settings
 dataset = dict(
-    name="all",
+    name="place",
     mode=['place'],
 )
 # model settings
@@ -34,10 +34,11 @@ stepper = dict(name='MultiStepLR',
 loss = dict(weight=[0.5, 5])
 
 # runtime settings
+# resume = "/data/SceneSeg/run/folder/place/model_best.pth.tar"
 resume = None
-trainFlag = 1
-testFlag = 1
-batch_size = 128
+trainFlag = False
+testFlag = True
+batch_size = 32
 epochs = 30
-logger = dict(log_interval=200, logs_dir="../run/{}".format(experiment_name))
-data_loader_kwargs = dict(num_workers=32, pin_memory=True, drop_last=True)
+logger = dict(log_interval=200, logs_dir="/data/SceneSeg/run/folder/{}".format(experiment_name))
+data_loader_kwargs = dict(num_workers=16, pin_memory=True, drop_last=True)

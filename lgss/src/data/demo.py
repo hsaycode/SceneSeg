@@ -75,34 +75,66 @@ class Preprocessor(data.Dataset):
         return imgs, label
 
 
-def data_partition(cfg, valid_shotids):
-    assert(cfg.seq_len % 2 == 0)
-    seq_len_half = cfg.seq_len//2
+# def data_partition(cfg, valid_shotids):
+#     assert(cfg.seq_len % 2 == 0)
+#     seq_len_half = cfg.seq_len//2
 
+#     idxs = []
+#     one_mode_idxs = []
+#     shotid_tmp = 0
+#     for shotid in valid_shotids:
+#         if int(shotid) < shotid_tmp+seq_len_half:
+#             continue
+#         shotid_tmp = int(shotid)+seq_len_half
+#         one_idxs = []
+#         for idx in range(-seq_len_half+1, seq_len_half+1):
+#             one_idxs.append({'imdbid': cfg.video_name, 'shotid': strcal(shotid, idx)})
+#         one_mode_idxs.append(one_idxs)
+#     idxs.append(one_mode_idxs)
+
+#     partition = {}
+#     partition['train'] = idxs[0]
+#     partition['test'] = idxs[0]
+#     partition['val'] = idxs[0]
+#     return partition
+
+
+def data_partition(cfg, valid_shotids):
+    seq_len_half = cfg.seq_len//2
+    
     idxs = []
     one_mode_idxs = []
-    shotid_tmp = 0
-    for shotid in valid_shotids:
-        if int(shotid) < shotid_tmp+seq_len_half:
+    
+    # Process all valid shots
+    for i, shotid in enumerate(valid_shotids):
+        if i < seq_len_half:
             continue
-        shotid_tmp = int(shotid)+seq_len_half
+        if i >= len(valid_shotids) - seq_len_half:
+            break
+            
         one_idxs = []
         for idx in range(-seq_len_half+1, seq_len_half+1):
-            one_idxs.append({'imdbid': cfg.video_name, 'shotid': strcal(shotid, idx)})
+            one_idxs.append({
+                'imdbid': cfg.video_name, 
+                'shotid': str(valid_shotids[i + idx]).zfill(4)
+            })
         one_mode_idxs.append(one_idxs)
+    
     idxs.append(one_mode_idxs)
-
-    partition = {}
-    partition['train'] = idxs[0]
-    partition['test'] = idxs[0]
-    partition['val'] = idxs[0]
+    
+    partition = {
+        'train': idxs[0],
+        'test': idxs[0],
+        'val': idxs[0]
+    }
     return partition
+
 
 
 def data_pre(cfg):
     data_root = cfg.data_root
     img_dir_fn = osp.join(data_root, 'shot_keyf', cfg.video_name)
-    win_len = cfg.seq_len+cfg.shot_num  # - 1
+    win_len = cfg.seq_len #+cfg.shot_num  # - 1
 
     files = os.listdir(img_dir_fn)
     shotids = [int(x.split(".jpg")[0].split("_")[1]) for x in files if x.split(".jpg")[0][-1] == "1"]
@@ -125,8 +157,34 @@ def data_pre(cfg):
     return valid_shotids
 
 
+# def data_pre(cfg):
+#     data_root = cfg.data_root
+#     img_dir_fn = osp.join(data_root, 'shot_keyf', cfg.video_name)
+#     win_len = cfg.seq_len+cfg.shot_num  # - 1
+
+#     files = os.listdir(img_dir_fn)
+#     shotids = [int(x.split(".jpg")[0].split("_")[1]) for x in files if x.split(".jpg")[0][-1] == "1"]
+#     to_be_del = []
+#     for shotid in shotids:
+#         del_flag = False
+#         for idx in range(-(win_len)//2+1, win_len//2+1):
+#             if ((shotid + idx) not in shotids):
+#                 del_flag = True
+#                 break
+#         if del_flag:
+#             to_be_del.append(shotid)
+
+#     valid_shotids = []
+#     for shotid in shotids:
+#         if shotid in to_be_del:
+#             continue
+#         else:
+#             valid_shotids.append(shotid)
+#     return valid_shotids
+
+
 def main():
-    from mmcv import Config
+    from mmengine import Config
     cfg = Config.fromfile("./config/demo.py")
 
     valid_shotids = data_pre(cfg)

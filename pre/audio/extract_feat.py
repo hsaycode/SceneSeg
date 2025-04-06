@@ -1,3 +1,5 @@
+# pip install standard-aifc standard-sunau
+
 import sys
 sys.path.append("../")
 import argparse
@@ -10,6 +12,7 @@ import pickle
 import pdb
 import subprocess
 import librosa
+import soundfile as sf
 
 global parallel_cnt
 global parallel_num
@@ -49,6 +52,9 @@ def run_wav2stft(args,video_id,shot_id):
     if args.replace_old and osp.exists(feat_path):
         return 0
     data, fs = librosa.core.load(osp.join(args.save_wav_path,video_id,"{}.wav".format(shot_id)), sr=16000)
+    # data, fs = sf.read(osp.join(args.save_wav_path,video_id,"{}.wav".format(shot_id)))
+    # print(f"Loaded audio: {data.shape}, Sample rate: {fs}")
+
     # normalize
     mean = (data.max() + data.min()) / 2
     span = (data.max() - data.min()) / 2
@@ -97,13 +103,16 @@ def main(args):
         video_list = sorted(os.listdir(args.source_video_path))
     else:
         video_list = [x.strip() for x in open(args.list_file)] 
-    video_list = [i.split(".m")[0] for i in video_list] ## to remove suffix .mp4 .mov etc. if applicable
+    #video_list = [i.split(".m")[0] for i in video_list] ## to remove suffix .mp4 .mov etc. if applicable
 
     # pdb.set_trace()
     global parallel_num
     parallel_num = 0
     for video_id in video_list:
-        shot_id_mp4_list = sorted(os.listdir(osp.join(args.source_video_path,video_id)))
+        path = osp.join(args.source_video_path,video_id)
+        # print("path is ", path)
+        shot_id_mp4_list = sorted(os.listdir(path))
+        print(shot_id_mp4_list)
         for shot_id_mp4 in shot_id_mp4_list:
             parallel_num +=1
     
@@ -114,22 +123,24 @@ def main(args):
         os.makedirs(osp.join(args.save_stft_path,video_id),exist_ok = True)
         for shot_id_mp4 in shot_id_mp4_list:
             shot_id = shot_id_mp4.split(".m")[0]
-            # run(args,video_id,shot_id)
+            run(args,video_id,shot_id)
             # pdb.set_trace()
-            pool.apply_async(run, (args,video_id,shot_id) , callback=call_back)
+            #pool.apply_async(run, (args,video_id,shot_id) , callback=call_back)
     pool.close() 
     pool.join()
 
 if __name__ == '__main__':
-    data_root = "data/demo"
+    # data_root = "data/demo"
+    data_root = "/data/AVLectures/Features/mit001"
     parser = argparse.ArgumentParser("Audio feature using stft")
     parser.add_argument('--replace_old', action="store_true",help='rewrite exisiting wav and feature')
-    parser.add_argument('-nw','--num_workers', type=int,default=8,help='number of processors.')
-    parser.add_argument('--list_file', type=str, default=osp.join(data_root,'meta/list_test.txt'),
+    parser.add_argument('-nw','--num_workers', type=int,default=16,help='number of processors.')
+    parser.add_argument('--list_file', type=str, default=('/data/AVLectures/Extract/mit001/video_titles.txt'),
                         help='The list of videos to be processed,\
                         in the form of xxxx0.mp4\nxxxx1.mp4\nxxxx2.mp4\n \
                                      or xxxx0\nxxxx1\nxxxx2\n')
-    parser.add_argument('--source_video_path',type=str,default=osp.join(data_root,"shot_split_video"))
+    # parser.add_argument('--source_video_path',type=str,default=osp.join(data_root,"shot_split_video"))
+    parser.add_argument('--source_video_path',type=str,default='/data/AVLectures/Features/mit001/shot_split_video')
     parser.add_argument('--save_wav_path',    type=str,default=osp.join(data_root,"aud_wav"))
     parser.add_argument('--save_stft_path',   type=str,default=osp.join(data_root,"aud_feat"))
     parser.add_argument('--duration_time',type=float,default=0.2)

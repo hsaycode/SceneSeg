@@ -3,7 +3,7 @@ import sys
 sys.path.append("../")
 from utilis import mkdir_ifmiss,read_txt_list,read_json
 from utilis.package import *
-import mmcv
+import mmengine
 import cv2
 import librosa
 import pickle
@@ -12,10 +12,13 @@ import multiprocessing
 import subprocess
 
 if __name__=='__main__':
-    data_root = "../../data/scene318"
+    #data_root = "../../data/scene318"
+    # data_root= "/data/SceneSeg/data"
+    data_root = "/data/AVLectures/Features/mit001"
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_workers', type=int,default=8,help='number of processors.')
-    parser.add_argument('--source_video_path',type=str,default=osp.join(data_root,"shot_video"))
+    parser.add_argument('--num_workers', type=int,default=16,help='number of processors.')
+    # parser.add_argument('--source_video_path',type=str,default=osp.join(data_root,"shot_video"))
+    parser.add_argument('--source_video_path',type=str,default='/data/AVLectures/Extract/mit001/videos')
     parser.add_argument('--source_wav_path', type=str,default=osp.join(data_root, "audio_wav"))
     parser.add_argument('--dest_stft_path',  type=str,default=osp.join(data_root, "stft_feat"))
     parser.add_argument('--dest_map_path',   type=str,default=osp.join(data_root, "stft_map"))

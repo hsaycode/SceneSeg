@@ -1,7 +1,7 @@
-#%%
 from __future__ import print_function
 
 from mmengine import Config
+import wandb
 from tensorboardX import SummaryWriter
 
 import src.models as models
@@ -29,9 +29,7 @@ if cfg.trainFlag:  # copy running config to run files
     writer = SummaryWriter(logdir=cfg.logger.logs_dir)
     shutil.copy2(args.config, cfg.logger.logs_dir)
 
-
 train_iter = 0
-
 
 def train(cfg, model, train_loader, optimizer, scheduler, epoch, criterion):
     global train_iter
@@ -114,6 +112,7 @@ def test(cfg, model, test_loader, criterion, mode='test'):
 
     test_loss /= batch_num
     ap = get_ap(gts_raw, prob_raw)
+    wandb.log({"AP": ap})  # Log AP to wandb
     mAP, mAP_list = get_mAP_seq(test_loader, gts_raw, prob_raw)
     print("AP: {:.3f}".format(ap))
     print('mAP: {:.3f}'.format(mAP))
@@ -135,8 +134,8 @@ def test(cfg, model, test_loader, criterion, mode='test'):
             })
         return gts, preds
 
-
 def main():
+    wandb.init(name="inference_run0")
     trainSet, testSet, valSet = get_data(cfg)
     train_loader = DataLoader(
                     trainSet, batch_size=cfg.batch_size,
@@ -197,6 +196,7 @@ def main():
                   'between shots and their frames')
         log_dict = {'cfg': cfg.__dict__['_cfg_dict'], 'final': final_dict}
         write_json(osp.join(cfg.logger.logs_dir, "log.json"), log_dict)
+        wandb.log(final_dict)  # Log final metrics to wandb
 
         if cfg.dataset.name == "demo":
             print('...visualize scene video in demo mode, '
@@ -204,8 +204,7 @@ def main():
             scene_dict, scene_list = pred2scene(cfg, threshold=0.2)
             scene2video(cfg, scene_list)
 
-#%%
+    wandb.finish()
+
 if __name__ == '__main__':
     main()
-
-#%%

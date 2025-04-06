@@ -28,7 +28,8 @@ def main(args, video_path, data_root):
     stats_file_folder_path = osp.join(data_root, "shot_stats")
     os.makedirs(stats_file_folder_path, exist_ok=True)
 
-    video_prefix = video_path.split(".")[0].split("/")[-1]
+    #video_prefix = video_path.split(".")[0].split("/")[-1]
+    video_prefix = ".".join(video_path.split(".")[:-1]).split("/")[-1]
     stats_file_path = osp.join(stats_file_folder_path, '{}.csv'.format(video_prefix))
     # print(video_path)
     video_manager = VideoManager([video_path])
@@ -114,16 +115,19 @@ def call_back(rst):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("Parallel ShotDetect")
-    parser.add_argument('--num_workers', type=int, default=2, help='number of processors.')
+    parser.add_argument('--num_workers', type=int, default=16, help='number of processors.')
     parser.add_argument('--source_path', type=str,
-                        default=osp.join("../../data/video"),
+                        # default=osp.join("../../data/video"),
+                        default=osp.join("/data/AVLectures/Extract/mit001/videos"),
                         help="path to the videos to be processed, please use absolute path")
     parser.add_argument('--list_file', type=str, 
-                        default="../../data/meta.txt",
+                        # default="../../data/meta.txt",
+                        default="/data/AVLectures/Extract/mit001/video_titles.txt",
                         help='The list of videos to be processed,\
                         in the form of xxxx0.mp4\nxxxx1.mp4\nxxxx2.mp4\n')
     parser.add_argument('--save_data_root_path', type=str,
-                        default="../../data",
+                        # default="../../data",
+                        default="/data/AVLectures/Features/mit001",
                         help="path to the saved data, please use absolute path")
     parser.add_argument('--save_keyf',       action="store_true")
     parser.add_argument('--save_keyf_txt',   action="store_true")
@@ -145,8 +149,9 @@ if __name__ == '__main__':
     pool = multiprocessing.Pool(processes=args.num_workers)
     for video_id in video_list:
         video_path = osp.abspath(osp.join(args.source_path, f"{video_id}.mp4"))
+        print
         # uncommnet the following line and turn to non-parallel mode if wish to debug
-        # main(args, video_path, args.save_data_root_path) 
+        #main(args, video_path, args.save_data_root_path) 
         pool.apply_async(main, args=(args, video_path, args.save_data_root_path), callback=call_back)
     pool.close()
     pool.join()

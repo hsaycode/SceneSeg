@@ -161,12 +161,14 @@ def get_data(video_id, img_path, batch_size, workers):
 
 
 def get_img_folder(data_root, video_id):
-    img_folder = osp.join(data_root, video_id)
-    if osp.isdir(img_folder):
-        return img_folder
-    else:
-        print('No such movie: {}'.format(video_id))
-        return None
+    img_folder = os.path.join(data_root, video_id)
+    #print(img_folder)
+    return img_folder
+    # if os.path.exists(img_folder):
+    #     return img_folder
+    # else:
+    #     print('No such movie: {}'.format(video_id))
+    #     return None
 
 
 def main(args):
@@ -181,7 +183,9 @@ def main(args):
     if args.list_file is None:
         video_list = sorted(os.listdir(args.source_img_path))
     else:
-        video_list = [x for x in open(args.list_file)] 
+        video_list = [x.strip() for x in open(args.list_file)]
+        
+    #print(video_list)
     video_list = [i.split(".m")[0] for i in video_list] ## to remove suffix .mp4 .mov etc. if applicable
     video_list = video_list[args.st:args.ed]
     print('****** Total {} videos ******'.format(len(video_list)))
@@ -189,8 +193,10 @@ def main(args):
     for idx_m, video_id in enumerate(video_list):
         print('****** {}, {} / {}, {} ******'.format(datetime.now(), idx_m+1, len(video_list), video_id))
         save_path = osp.join(args.save_path, video_id)
+        print(video_id)
         os.makedirs(save_path,exist_ok=True)
         img_path = get_img_folder(args.source_img_path, video_id)
+        print(img_path)
         if not osp.isdir(img_path):
             print('Cannot find images!')
 
@@ -236,13 +242,13 @@ if __name__ == '__main__':
     data_root ="data"
     parser = argparse.ArgumentParser("Place feature using ResNet50 with ImageNet pretrain")
     parser.add_argument('--save-one-frame-feat', action="store_true")
-    parser.add_argument('-b', '--batch-size', type=int, default=512)
-    parser.add_argument('-j', '--workers', type=int, default=32)
-    parser.add_argument('--list_file', type=str, default=osp.join(data_root,'meta/list_test.txt'),
+    parser.add_argument('-b', '--batch-size', type=int, default=64)
+    parser.add_argument('-j', '--workers', type=int, default=16)
+    parser.add_argument('--list_file', type=str, default=('/data/OpenDataLab___MovieNet/raw/movie1K.list.txt'),
                         help='The list of videos to be processed,\
                         in the form of xxxx0.mp4\nxxxx1.mp4\nxxxx2.mp4\n \
                                      or xxxx0\nxxxx1\nxxxx2\n')
-    parser.add_argument('--source_img_path', type=str,default=osp.join(data_root,'shot_keyf'))
+    parser.add_argument('--source_img_path', type=str,default=('/data/OpenDataLab___MovieNet/raw/keyframes_from_240P'))
     parser.add_argument('--save_path',type=str,default=osp.join(data_root,'place_feat_raw'))
     parser.add_argument('--save_feat_path',type=str,default=osp.join(data_root,'place_feat'))
     parser.add_argument('--st', type=int, default=0, help='start number') 

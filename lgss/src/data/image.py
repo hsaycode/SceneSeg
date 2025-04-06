@@ -67,7 +67,9 @@ class Preprocessor(data.Dataset):
             for ind in self.shot_boundary_range:
                 name = 'shot_{}.jpg'.format(strcal(shotid, ind))
                 path = osp.join(
-                    self.data_root, 'keyf_240p/{}'.format(imdbid), name)
+                    # self.data_root, 'keyf_240p/{}'.format(imdbid), name
+                    self.data_root, 'keyf_240p/{}'.format(imdbid), name
+                    )
                 img = Image.open(path).convert('RGB')
                 if self.transform:
                     img = self.transform(img)
@@ -180,7 +182,7 @@ def get_anno_dict(anno_fn):
 
 
 def main():
-    from mmcv import Config
+    from mmengine import Config
     cfg = Config.fromfile("./config/image.py")
 
     imdbidlist_json, annos_dict, annos_valid_dict = data_pre(cfg)

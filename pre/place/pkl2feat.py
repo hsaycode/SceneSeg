@@ -13,7 +13,8 @@ def run(args,video_id):
           np.save(save_fn,item)
 
 if __name__ == '__main__':
-     data_root = "../../data/scene318"
+     # data_root = "../../data/scene318"
+     data_root= "/data/SceneSeg/data"
      parser = argparse.ArgumentParser()
      parser.add_argument('-nw','--num_workers', type=int,default=10,help='number of processors.')
      parser.add_argument('-dp','--dest_path', type=str,  default=osp.join(data_root,"npy_feat3"))

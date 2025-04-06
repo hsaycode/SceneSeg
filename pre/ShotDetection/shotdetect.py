@@ -72,7 +72,8 @@ def main(args, data_root):
             generate_images_txt(shot_list, output_dir)
 
         if args.split_video:
-            output_dir = osp.join(data_root, "shot_split_video", video_prefix)
+            # output_dir = osp.join(data_root, "shot_split_video", video_prefix)
+            output_dir = osp.join("/data/AVLectures/Extract/mit001/videos", video_prefix)
             split_video_ffmpeg([video_path], shot_list, output_dir, suppress_output=False)
 
         if stats_manager.is_save_required():
@@ -87,7 +88,8 @@ if __name__ == '__main__':
                         default="/data/SceneSeg/pre/demo.mp4",
                         help="Path to the video to be processed")
     parser.add_argument('--save_data_root_path', type=str,
-                        default="/data/SceneSeg/pre/",
+                        #default="/data/SceneSeg/pre/",
+                        default="/data/AVLectures/Extract/mit001",
                         help="Path to save the processed data")
     parser.add_argument('--print_result',    action="store_true")
     parser.add_argument('--save_keyf',       action="store_true")

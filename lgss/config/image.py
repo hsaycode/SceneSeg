@@ -1,7 +1,8 @@
 experiment_name = "image50"
 experiment_description = "scene segmentation using images only"
 # overall confg
-data_root = '../data/scene318'
+#data_root = '../data/scene318'
+data_root= "/data/SceneSeg/data"
 shot_frm_path = data_root + "/shot_movie318"
 shot_num = 4  # even
 seq_len = 10  # even
