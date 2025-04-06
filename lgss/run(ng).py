@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 from mmengine import Config
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 
 import src.models as models
 import torch
@@ -15,11 +15,13 @@ from utilis import (cal_MIOU, cal_Recall, cal_Recall_time, get_ap, get_mAP_seq,
                     save_pred_seq, scene2video, to_numpy, write_json)
 from utilis.package import *
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Runner')
     parser.add_argument('config', help='config file path')
     args = parser.parse_args()
     return args
+
 
 args = parse_args()
 cfg = Config.fromfile(args.config)

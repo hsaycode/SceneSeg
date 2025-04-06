@@ -4,3 +4,9 @@ data/scene318
 *.DS_Store
 *.pyc
 *.pyo
+pre/shot_keyf
+data
+pre/scene_video
+pre/demo.mp4
+pre/shot_stats
+pre/shot_txt

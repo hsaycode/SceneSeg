@@ -46,7 +46,11 @@ def get_demo_scene_list(cfg,pred_list):
         shotid = content.split(" ")[1]
         label = content.split(" ")[3]
         anno_dict.update({shotid:int(label)})
+    print("pred_list:", pred_list)
     pair_list = get_pair_list(anno_dict)
+
+    print("anno_dict:", anno_dict)  # Debugging output
+    print("pair_list:", pair_list)  # Check if it's None
 
     shotfrm_fn = osp.join(cfg.shot_frm_path,"{}.txt".format(cfg.video_name))
     shotfrmlist = read_txt_list(shotfrm_fn)
@@ -160,8 +164,9 @@ def save_pred_seq(cfg,loader,gts,preds):
                     f.write('{} {} {} {}\n'.format(one_idx['imdbid'], one_idx['shotid'], \
                     gts[i*cfg.seq_len+j],tmp[i*cfg.seq_len+j]))
 
-def pred2scene(cfg,threshold=0.5):
+def pred2scene(cfg,threshold):
     pred_fn = osp.join(cfg.logger.logs_dir,'pred/pred_{:.2f}.txt'.format(threshold))
+    # print(pred_fn)
     pred_list = read_txt_list(pred_fn)
     scene_list,pair_list = get_demo_scene_list(cfg,pred_list)
     scene_dict = {}
@@ -181,7 +186,8 @@ def pred2scene(cfg,threshold=0.5):
 
 def scene2video(cfg,scene_list):
     print("...scene list to videos process of {}".format(cfg.video_name))
-    source_movie_fn = '{}.mp4'.format(osp.join(cfg.data_root,"video",cfg.video_name))
+    source_movie_fn = '{}.mp4'.format(osp.join(cfg.data_root,cfg.video_name))
+    print(source_movie_fn)
     vcap = cv2.VideoCapture(source_movie_fn)
     fps = vcap.get(cv2.CAP_PROP_FPS) #video.fps
     out_video_dir_fn = osp.join(cfg.data_root,"scene_video",cfg.video_name)

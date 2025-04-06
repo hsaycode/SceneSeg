@@ -13,6 +13,7 @@ import sys
 import json
 import time
 from pprint import pprint
+from torchvision.models import ResNet50_Weights
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -54,7 +55,8 @@ class AverageMeter(object):
 class ResNet50(torch.nn.Module):
     def __init__(self, pretrained=True):
         super(ResNet50, self).__init__()
-        self.base = models.resnet50(pretrained=pretrained)
+        weights = ResNet50_Weights.IMAGENET1K_V1 if pretrained else None
+        self.base = models.resnet50(weights = weights)
     
     def forward(self, x):
         for name, module in self.base._modules.items():
@@ -209,7 +211,7 @@ def main(args):
                 os.makedirs(osp.join(args.save_feat_path,video_id),exist_ok = True)
                 img_ind = key.split("_")[-1].split(".jpg")[0]
                 if args.save_one_frame_feat:
-                    if img_ind is "1":
+                    if img_ind == "1":
                         shot_ind = key.split("_")[1]
                         save_fn = osp.join(args.save_feat_path,video_id,"shot_{}.npy".format(shot_ind))
                         np.save(save_fn,item)
@@ -230,7 +232,8 @@ def main(args):
 
 
 if __name__ == '__main__':
-    data_root = "data/demo"
+    # data_root = "data/demo"
+    data_root ="data"
     parser = argparse.ArgumentParser("Place feature using ResNet50 with ImageNet pretrain")
     parser.add_argument('--save-one-frame-feat', action="store_true")
     parser.add_argument('-b', '--batch-size', type=int, default=512)

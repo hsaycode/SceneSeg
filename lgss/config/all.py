@@ -1,7 +1,7 @@
 experiment_name = "all"
 experiment_description = "scene segmentation with all modality"
 # overall confg
-data_root = '../data/scene318'
+data_root = '/data/SceneSeg/data'
 shot_frm_path = data_root + "/shot_movie318"
 shot_num = 4  # even
 seq_len = 10  # even
@@ -35,9 +35,9 @@ loss = dict(weight=[0.5, 5])
 
 # runtime settings
 resume = None
-trainFlag = 0
-testFlag = 1
+trainFlag = False
+testFlag = True
 batch_size = 128
 epochs = 30
-logger = dict(log_interval=200, logs_dir="../run/{}".format(experiment_name))
-data_loader_kwargs = dict(num_workers=32, pin_memory=True, drop_last=True)
+logger = dict(log_interval=200, logs_dir="/data/SceneSeg/run/folder/{}".format(experiment_name))
+data_loader_kwargs = dict(num_workers=16, pin_memory=True, drop_last=True)

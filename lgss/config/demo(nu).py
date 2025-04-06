@@ -1,7 +1,7 @@
 experiment_name = "image50"
 experiment_description = "scene segmentation using images only"
 # overall confg
-data_root = '/data/SceneSeg/pre'
+data_root = '../data/demo'
 shot_frm_path = data_root + "/shot_txt"  
 # the correspondence file of shots and their frames
 '''
@@ -41,5 +41,5 @@ trainFlag = False
 testFlag = True
 batch_size = 16
 epochs = 30
-logger = dict(log_interval=200, logs_dir="/data/SceneSeg/run/folder/{}".format(experiment_name))
-data_loader_kwargs = dict(num_workers=16, pin_memory=True, drop_last=False)
+logger = dict(log_interval=200, logs_dir="../run/{}".format(experiment_name))
+data_loader_kwargs = dict(num_workers=32, pin_memory=True, drop_last=False)
