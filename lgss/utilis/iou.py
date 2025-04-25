@@ -41,10 +41,14 @@ def cal_MIOU(cfg,threshold=0.5):
           "pred_path":osp.join(cfg.logger.logs_dir,'pred/pred_{:.2f}.txt'.format(threshold)),
           "shot_path":cfg.shot_frm_path
      }
+     
+     # print("pred_path:",metric_dict.get('pred_path'))
+     # print("shot_path:",metric_dict.get('shot_path'))
      result_dict = get_result_dict(metric_dict)
      Mious = []
      for imdbid, result_dict_one in result_dict.items():
           shot_fn = "{}/{}.txt".format(metric_dict.get('shot_path'),imdbid)
+          # print(shot_fn)
           with open (shot_fn,"r") as f:
                shot_list = f.read().splitlines()
 
@@ -52,13 +56,24 @@ def cal_MIOU(cfg,threshold=0.5):
           for shotid, item in result_dict_one.items():
                gt_dict_one.update({shotid:int(item.get('gt'))})
                pred_dict_one.update({shotid:int(item.get('pred'))})
+               
           gt_pair_list = get_pair_list(gt_dict_one)
           pred_pair_list = get_pair_list(pred_dict_one)
+          
+          # print("gt_dict_one:", gt_pair_list)
+          # print("pred_dict_one:", pred_pair_list)
+          # print("shot_list:", shot_list)
+          
           if pred_pair_list is None:
                Mious.append(0)
                continue
           gt_scene_list = get_scene_list(gt_pair_list,shot_list)
           pred_scene_list = get_scene_list(pred_pair_list,shot_list)
+          
+          # print("gt_scene_list:", gt_scene_list)
+          # print("pred_scene_list:", pred_scene_list)
+          
+          
           if gt_scene_list is None or pred_scene_list is None:
                return None
           miou1 = cal_miou(gt_scene_list,pred_scene_list)

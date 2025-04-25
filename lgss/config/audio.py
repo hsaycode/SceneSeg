@@ -1,9 +1,10 @@
 experiment_name = "aud"
 experiment_description = "scene segmentation"
+
 # overall confg
 # data_root = '../data/scene318'
-data_root = '/data/AVLectures/Features/mit001'
-shot_frm_path = data_root + "/shot_movie318"
+data_root = '/data/AVLectures/Features'
+shot_frm_path = "/data/AVLectures/Folder/combined_shot_txt"
 shot_num = 4 #even
 seq_len = 10  #even
 gpus = "0,1,2,3,4,5,6,7"
@@ -13,6 +14,7 @@ dataset = dict(
     name = "aud",
     mode=['aud'],
 )
+
 # model settings
 model = dict(
     name='LGSS',
@@ -36,9 +38,9 @@ loss = dict(weight = [0.5,5])
 
 # runtime settings
 resume = None
-trainFlag = True    
-testFlag  = False
-batch_size = 96
+trainFlag = False
+testFlag  = True
+batch_size = 1
 epochs = 30
-logger = dict(log_interval = 200, logs_dir = "../run/{}".format(experiment_name))
+logger = dict(log_interval = 200, logs_dir = "/data/SceneSeg/run/folder/{}".format(experiment_name))
 data_loader_kwargs = dict(num_workers=16, pin_memory=True, drop_last=True)

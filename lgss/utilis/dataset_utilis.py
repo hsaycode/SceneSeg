@@ -64,6 +64,8 @@ def get_demo_scene_list(cfg,pred_list):
     return scene_list,pair_list
 
 def getIntersection(interval_1, interval_2):
+        # print("interval_1:", interval_1)
+        # print("interval_2:", interval_2)
         assert interval_1[0] < interval_1[1],"start frame is bigger than end frame."
         assert interval_2[0] < interval_2[1],"start frame is bigger than end frame."
         start = max(interval_1[0], interval_2[0])

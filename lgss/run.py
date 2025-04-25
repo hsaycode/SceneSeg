@@ -1,4 +1,3 @@
-#%%
 from __future__ import print_function
 
 from mmengine import Config
@@ -185,6 +184,8 @@ def main():
             osp.join(cfg.logger.logs_dir, 'model_best.pth.tar'))
         model.load_state_dict(checkpoint['state_dict'])
         gts, preds = test(cfg, model, test_loader, criterion, mode='test_final')
+        # print("gts:", gts)
+        # print("preds:", preds)
         save_pred_seq(cfg, test_loader, gts, preds)
         if cfg.shot_frm_path is not None:
             Miou = cal_MIOU(cfg, threshold=0.5)
@@ -203,8 +204,7 @@ def main():
                   'the above quantitive metrics are invalid')
             scene_dict, scene_list = pred2scene(cfg, threshold=0.2)
             scene2video(cfg, scene_list)
-
-#%%
+            
 if __name__ == '__main__':
     main()
 

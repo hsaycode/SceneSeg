@@ -11,6 +11,7 @@ import os.path as osp
 import pdb
 from datetime import datetime
 
+
 from shotdetect.detectors.average_detector import AverageDetector
 from shotdetect.detectors.content_detector_hsv_luv import ContentDetectorHSVLUV
 from shotdetect.keyf_img_saver import generate_images, generate_images_txt
@@ -22,6 +23,7 @@ from shotdetect.video_splitter import split_video_ffmpeg
 global parallel_cnt
 global parallel_num
 parallel_cnt = 0
+COURSE = "mit002"
 
 
 def main(args, video_path, data_root):
@@ -118,16 +120,16 @@ if __name__ == '__main__':
     parser.add_argument('--num_workers', type=int, default=16, help='number of processors.')
     parser.add_argument('--source_path', type=str,
                         # default=osp.join("../../data/video"),
-                        default=osp.join("/data/AVLectures/Extract/mit002/videos"),
+                        default=osp.join(f"/data/AVLectures/Extract/{COURSE}/splits_vid"),
                         help="path to the videos to be processed, please use absolute path")
     parser.add_argument('--list_file', type=str, 
                         # default="../../data/meta.txt",
-                        default="/data/AVLectures/Extract/mit002/video_names.txt",
+                        default=F"/data/AVLectures/Extract/{COURSE}/video_titles.txt",
                         help='The list of videos to be processed,\
                         in the form of xxxx0.mp4\nxxxx1.mp4\nxxxx2.mp4\n')
     parser.add_argument('--save_data_root_path', type=str,
                         # default="../../data",
-                        default="/data/AVLectures/Features/mit002",
+                        default=f"/data/AVLectures/Folder/{COURSE}",
                         help="path to the saved data, please use absolute path")
     parser.add_argument('--save_keyf',       action="store_true")
     parser.add_argument('--save_keyf_txt',   action="store_true")
@@ -144,12 +146,13 @@ if __name__ == '__main__':
         video_list = sorted(os.listdir(args.source_path))
     else:
         video_list = [x.strip() for x in open(args.list_file)]
+        # list of the lecture videos
 
     parallel_num = len(video_list)
     pool = multiprocessing.Pool(processes=args.num_workers)
     for video_id in video_list:
         video_path = osp.abspath(osp.join(args.source_path, f"{video_id}.mp4"))
-        print
+        # print (video_path)
         # uncommnet the following line and turn to non-parallel mode if wish to debug
         #main(args, video_path, args.save_data_root_path) 
         pool.apply_async(main, args=(args, video_path, args.save_data_root_path), callback=call_back)
